@@ -20,8 +20,7 @@ mod_user_standings_ui <- function(id){
 mod_user_standings_server <- function(input, output, session, user_games, user_names, league_games){
   ns <- session$ns
   dfs <- purrr::imap(user_games, ~{
-    out <- .x %>% dplyr::mutate(user = !!user_names[.y])
-    
+    out <- .x %>% dplyr::mutate(user = .y)
   })
   df <- purrr::reduce(dfs, dplyr::bind_rows)
   if(nrow(df) == 0) return(NULL)
