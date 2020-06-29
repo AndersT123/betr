@@ -83,8 +83,8 @@ mod_games_table_server <- function(input, output, session, to_database, user_nam
                  # Add year to string such that data$date_time character can be converted to string
                  # warnings produced about formats failing to parse if NAs present
                  data <- data %>% dplyr::mutate(
-                   date_time = ydm_hm(paste0("2020-", date_time)),
-                   submit_time = ydm_hm(paste0("2020-", submit_time)))
+                   date_time = lubridate::ydm_hm(paste0("2020-", date_time)),
+                   submit_time = lubridate::ydm_hm(paste0("2020-", submit_time)))
                  
                  
                  condition <- (lubridate::now() - lubridate::minutes(30)) > data$date_time
@@ -98,6 +98,6 @@ mod_games_table_server <- function(input, output, session, to_database, user_nam
                    dplyr::select(date_time, home_team, away_team, home_pred, away_pred, submit_time)
                  
                  
-                 readr::write_csv(data, path = paste0(data_dir,"/", user_name(), "/games.csv"))
+                 readr::write_csv(data, path = paste0(to_database,"/", user_name(), "/games.csv"))
                })
 }
