@@ -13,3 +13,19 @@ games <- games %>% tidyr::unite(col = game_time, dates, time, sep=" ", remove = 
   # in home_score and away_score
   tidyr::separate(col = scores, into = c("home_score", "away_score"), remove = T, convert = T)
 
+# Correcting postponed matches (errors in bold.)
+games <- games %>% mutate(game_time = if_else(1:nrow(games) %in% c(2, 3), as.POSIXct.Date(NA), game_time))
+
+library(DBI)
+library(config)
+conf <- config::get()
+
+con <- dbConnect(
+  drv = RMariaDB::MariaDB(),
+  dbname = conf$dbname,
+  username = conf$username,
+  password = conf$password,
+  host = conf$host,
+  port = conf$port)
+
+dbWriteTable(con, "results_bold", value = games, append = TRUE)
